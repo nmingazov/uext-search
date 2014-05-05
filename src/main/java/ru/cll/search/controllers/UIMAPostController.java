@@ -25,14 +25,29 @@ public class UIMAPostController extends BaseController{
     @Autowired
     private UIMAService uimaService;
 
+    /**
+     * Выдает аннотации текста в "читабельном" виде
+     * @param text исходный текст
+     * @throws IOException
+     * @throws UIMAException
+     */
     @RequestMapping(value = "/getDirtyAnnotations", method = {RequestMethod.GET, RequestMethod.POST})
     public String getAllAnnotation(@RequestParam String text) throws IOException, UIMAException {
-        request.setAttribute("initialText", text);
         String annotationInfo = uimaService.getAllAnnotationsAsString(text);
+
+        request.setAttribute("initialText", text);
         request.setAttribute("annotations", annotationInfo.replace("\n", "<br>"));
+
         return "templates/minimalUimaTemplate";
     }
 
+    /**
+     * Выдает XMI по тексту
+     * @param text исходный текст
+     * @throws UIMAException
+     * @throws SAXException
+     * @throws IOException
+     */
     @RequestMapping(value = "/getXmi", method = {RequestMethod.GET, RequestMethod.POST})
     public HttpEntity<byte[]> getJCasXmiWay(@RequestParam String text)
             throws UIMAException, SAXException, IOException {
@@ -40,7 +55,6 @@ public class UIMAPostController extends BaseController{
 
         // Dirty way to return xml without marshalling view
         byte[] documentBody = xml.getBytes();
-
         HttpHeaders header = new HttpHeaders();
         header.setContentType(new MediaType("application", "xml"));
         header.setContentLength(documentBody.length);
