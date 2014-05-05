@@ -7,6 +7,7 @@ import org.apache.uima.cas.impl.XmiCasSerializer;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ExternalResourceDescription;
+import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.metadata.TypeSystemDescription;
 import org.apache.uima.util.CasCreationUtils;
 import org.apache.uima.util.XMLSerializer;
@@ -43,8 +44,12 @@ public class UIMAService {
     private TypeSystemDescription typeSystemDescription;
     private AnalysisEngine analysisEngine;
 
+    /**
+     * Инициализирует использующийся pipeline
+     * @throws ResourceInitializationException
+     */
     @PostConstruct
-    public void initialization() throws Exception {
+    public void initialization() throws ResourceInitializationException {
         TypeSystemDescription tsd = TypeSystemDescriptionFactory.createTypeSystemDescription(
                 "ru.kfu.itis.cll.uima.commons.Commons-TypeSystem",
                 "ru.kfu.cll.uima.tokenizer.tokenizer-TypeSystem",
@@ -69,6 +74,12 @@ public class UIMAService {
         );
     }
 
+    /**
+     * Запускает пайплайн, затем, используя грязные методы, выдирает информацию об аннотациях
+     * @param text исходный текст
+     * @throws UIMAException
+     * @throws IOException
+     */
     public String getAllAnnotationsAsString(String text) throws UIMAException, IOException {
         JCas jCas = JCasFactory.createJCas(typeSystemDescription);
         jCas.setDocumentText(text);
@@ -85,6 +96,13 @@ public class UIMAService {
         return sb.toString();
     }
 
+    /**
+     * Запускает пайплайн, затем преобразует JCas в Xmi
+     * @param text исходный текст
+     * @throws UIMAException
+     * @throws IOException
+     * @throws SAXException
+     */
     public String getXmlTranslatedResult(String text) throws UIMAException, IOException, SAXException {
         JCas jCas = JCasFactory.createJCas(typeSystemDescription);
         jCas.setDocumentText(text);
