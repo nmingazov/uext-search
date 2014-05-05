@@ -3,11 +3,13 @@ package ru.cll.search.service;
 import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngine;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
+import org.apache.uima.cas.impl.XmiCasSerializer;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ExternalResourceDescription;
 import org.apache.uima.resource.metadata.TypeSystemDescription;
 import org.apache.uima.util.CasCreationUtils;
+import org.apache.uima.util.XMLSerializer;
 import org.springframework.stereotype.Service;
 import org.uimafit.factory.AnalysisEngineFactory;
 import org.uimafit.factory.ExternalResourceFactory;
@@ -15,6 +17,7 @@ import org.uimafit.factory.JCasFactory;
 import org.uimafit.factory.TypeSystemDescriptionFactory;
 import org.uimafit.pipeline.SimplePipeline;
 import org.uimafit.util.JCasUtil;
+import org.xml.sax.SAXException;
 import ru.kfu.cll.uima.segmentation.SentenceSplitter;
 import ru.kfu.cll.uima.tokenizer.InitialTokenizer;
 import ru.kfu.cll.uima.tokenizer.PostTokenizer;
@@ -24,7 +27,9 @@ import ru.ksu.niimm.cll.uima.morph.opencorpora.resource.ConfigurableSerializedDi
 import ru.ksu.niimm.cll.uima.morph.opencorpora.resource.DummyWordformPredictor;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 /**
@@ -53,14 +58,15 @@ public class UIMAService {
                 DummyWordformPredictor.class.getName()
         );
 
-        AnalysisEngineDescription analysisEngineDescription = AnalysisEngineFactory.createAggregateDescription(
-                InitialTokenizer.createDescription(),
-                PostTokenizer.createDescription(),
-                SentenceSplitter.createDescription(),
-                MorphologyAnnotator.createDescription(morphDictDesc),
-                TagAssembler.createDescription(morphDictDesc));
-
-        analysisEngine = AnalysisEngineFactory.createAggregate(analysisEngineDescription);
+        analysisEngine = AnalysisEngineFactory.createAggregate(
+                AnalysisEngineFactory.createAggregateDescription(
+                    InitialTokenizer.createDescription(),
+                    PostTokenizer.createDescription(),
+                    SentenceSplitter.createDescription(),
+                    MorphologyAnnotator.createDescription(morphDictDesc),
+                    TagAssembler.createDescription(morphDictDesc)
+                )
+        );
     }
 
     public String getAllAnnotationsAsString(String text) throws UIMAException, IOException {
@@ -79,4 +85,20 @@ public class UIMAService {
         return sb.toString();
     }
 
+    public String getXmlTranslatedResult(String text) throws UIMAException, IOException, SAXException {
+        JCas jCas = JCasFactory.createJCas(typeSystemDescription);
+        jCas.setDocumentText(text);
+
+        SimplePipeline.runPipeline(jCas, analysisEngine);
+
+        // Xmi Consumer Logic
+        ByteArrayOutputStream xmiOutputStream = new ByteArrayOutputStream();
+
+        XmiCasSerializer ser = new XmiCasSerializer(jCas.getTypeSystem());
+        XMLSerializer xmlSer = new XMLSerializer(xmiOutputStream, true);
+
+        ser.serialize(jCas.getCas(), xmlSer.getContentHandler());
+
+        return xmiOutputStream.toString("UTF-8");
+    }
 }
