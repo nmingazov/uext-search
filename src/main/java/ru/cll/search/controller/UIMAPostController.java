@@ -1,4 +1,4 @@
-package ru.cll.search.controllers;
+package ru.cll.search.controller;
 
 import org.apache.uima.UIMAException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
 import ru.cll.search.service.UIMAService;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * author: Nikita
@@ -38,7 +36,7 @@ public class UIMAPostController extends BaseController{
         request.setAttribute("initialText", text);
         request.setAttribute("annotations", annotationInfo.replace("\n", "<br>"));
 
-        return "templates/minimalUimaTemplate";
+        return "minimalUimaTemplate";
     }
 
     /**
