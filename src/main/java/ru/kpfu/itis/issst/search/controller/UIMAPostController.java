@@ -24,8 +24,8 @@ public class UIMAPostController extends BaseController{
     private UIMAService uimaService;
 
     /**
-     * Выдает аннотации текста в "читабельном" виде
-     * @param text исходный текст
+     * @param text source text
+     * @return some dirty info about all annotations, like their span's
      * @throws IOException
      * @throws UIMAException
      */
@@ -40,8 +40,8 @@ public class UIMAPostController extends BaseController{
     }
 
     /**
-     * Выдает XMI по тексту
-     * @param text исходный текст
+     * @param text source text
+     * @return the same that XMI consumer returns
      * @throws UIMAException
      * @throws SAXException
      * @throws IOException

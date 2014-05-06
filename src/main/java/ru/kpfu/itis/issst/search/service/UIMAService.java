@@ -43,7 +43,9 @@ public class UIMAService {
     private AnalysisEngine analysisEngine;
 
     /**
-     * Инициализирует использующийся pipeline
+     * Analysis engine initialization
+     * Needs dict.opcorpora.ser dictionary in uima.datapath
+     * uima.datapath is the system property
      * @throws ResourceInitializationException
      */
     @PostConstruct
@@ -73,8 +75,8 @@ public class UIMAService {
     }
 
     /**
-     * Запускает пайплайн, затем, используя грязные методы, выдирает информацию об аннотациях
-     * @param text исходный текст
+     * Runs pipeline, then glues all annotations information into string
+     * @param text source text
      * @throws UIMAException
      * @throws IOException
      */
@@ -87,7 +89,7 @@ public class UIMAService {
         StringBuilder sb = new StringBuilder();
         for(Annotation annotation : JCasUtil.iterate(jCas, Annotation.class)){
             sb.append(annotation.toString())
-               .append("Sofa:-----|")
+               .append("Span:-----|")
                .append(annotation.getSofa().getLocalStringData().substring(annotation.getBegin(), annotation.getEnd()))
                .append("|-----\n");
         }
@@ -95,8 +97,8 @@ public class UIMAService {
     }
 
     /**
-     * Запускает пайплайн, затем преобразует JCas в Xmi
-     * @param text исходный текст
+     * Runs pipeline, then translate JCas into XML view, which the same as XMI Cas consumer
+     * @param text source text
      * @throws UIMAException
      * @throws IOException
      * @throws SAXException
