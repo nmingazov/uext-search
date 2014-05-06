@@ -1,4 +1,4 @@
-package ru.cll.search.controller;
+package ru.kpfu.itis.issst.search.controller;
 
 import org.apache.uima.UIMAException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.xml.sax.SAXException;
-import ru.cll.search.service.UIMAService;
+import ru.kpfu.itis.issst.search.service.UIMAService;
 
 import java.io.IOException;
 

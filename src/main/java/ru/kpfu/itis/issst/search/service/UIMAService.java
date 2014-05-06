@@ -1,8 +1,7 @@
-package ru.cll.search.service;
+package ru.kpfu.itis.issst.search.service;
 
 import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngine;
-import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.cas.impl.XmiCasSerializer;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
@@ -30,7 +29,6 @@ import ru.ksu.niimm.cll.uima.morph.opencorpora.resource.DummyWordformPredictor;
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 
 /**

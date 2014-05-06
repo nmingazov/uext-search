@@ -1,4 +1,4 @@
-package ru.cll.search.controller;
+package ru.kpfu.itis.issst.search.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
