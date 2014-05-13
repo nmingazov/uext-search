@@ -7,7 +7,7 @@
 
 ## Что за dict.opcorpora.ser?
 Это сериализованный словарь. Забудь, зачем.
-Для его получения  нужно выкачать xml по адресу http://opencorpora.org/files/export/dict/dict.opcorpora.xml.bz2.
+Для его получения нужно выкачать xml по адресу http://opencorpora.org/files/export/dict/dict.opcorpora.xml.bz2.
 Затем, необходимо разархивировать и запустить парсер ru.ksu.niimm.cll.uima.morph.opencorpora.resource.XmlDictionaryParser,
 где в качестве первого аргумента необходимо указать путь к xml, а второго - путь выходного файла (dict.opcorpora.ser).
 
