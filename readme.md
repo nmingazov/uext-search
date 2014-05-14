@@ -3,14 +3,24 @@
 
 ## Как запускать?
 Понадобится apache tomcat 7 (http://tomcat.apache.org/download-70.cgi).
-Параметры VM: -Duima.datapath={way to dict.opcorpora.ser without "{}"} -Xmx2048m -Dfile.encoding=UTF-8;
+Параметры VM: -Duima.datapath=/path/to/dict.opcorpora.ser -Xmx2048m -Dfile.encoding=UTF-8;
 
 ## Что за dict.opcorpora.ser?
 Это сериализованный словарь. Забудь, зачем.
-Для его получения нужно выкачать xml по адресу http://opencorpora.org/files/export/dict/dict.opcorpora.xml.bz2.
-Затем, необходимо разархивировать и запустить парсер ru.ksu.niimm.cll.uima.morph.opencorpora.resource.XmlDictionaryParser,
-где в качестве первого аргумента необходимо указать путь к xml, а второго - путь выходного файла (dict.opcorpora.ser).
+Для его получения нужно выкачать xml-словарь:
+1) Скачать архив по адресу http://opencorpora.org/files/export/dict/dict.opcorpora.xml.bz2
+2) Распаковать, получив dict.opcorpora.xml
+Затем в свободной папке:
+1) git clone https://github.com/CLLKazan/UIMA-Ext.git
+2) cd UIMA-Ext/UIMA.Ext.Morph.OpenCorpora
+2) mvn install
+3) mvn exec:exec -Dexec.executable="java" -Dexec.classpathScope="test"
+ -Dexec.args="-Xmx1500m -cp %classpath ru.ksu.niimm.cll.uima.morph.opencorpora.resource.XmlDictionaryParser 
+ /path/to/dict.opcorpora.xml /serialized/dictionary/output/path"
+ 
+В последней строке первый путь - это путь непосредственно к словарю dict.opcorpora.xml,
+второй - путь до формирующегося dict.opcorpora.ser (включая сам файл).
 
 ## Тесты! Где же тесты?
 Для них достаточно сделать так:
-mvn test -Duima.datapath={way to dict.opcorpora.ser without "{}"}
+mvn test -Duima.datapath=/path/to/dict.opcorpora.ser
