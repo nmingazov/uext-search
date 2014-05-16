@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.xml.sax.SAXException;
+import ru.kpfu.itis.issst.search.dto.AnnotatedDocument;
+import ru.kpfu.itis.issst.search.service.DocumentStorage;
 import ru.kpfu.itis.issst.search.service.UIMAService;
+import ru.kpfu.itis.issst.search.service.UIDGenerator;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -22,6 +26,12 @@ import java.io.IOException;
 public class UIMAPostController extends BaseController{
     @Autowired
     private UIMAService uimaService;
+
+    @Autowired
+    private UIDGenerator uidGenerator;
+
+    @Autowired
+    private DocumentStorage storage;
 
     /**
      * @param text source text
@@ -57,5 +67,17 @@ public class UIMAPostController extends BaseController{
         header.setContentType(new MediaType("application", "xml"));
         header.setContentLength(documentBody.length);
         return new HttpEntity<byte[]>(documentBody, header);
+    }
+
+    @RequestMapping(value = "/postDocument",method = {RequestMethod.GET, RequestMethod.POST})
+    public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response)
+            throws UIMAException, SAXException, IOException {
+        String uid = uidGenerator.getUID();
+        String xmi = uimaService.getXmlTranslatedResult(text);
+        storage.add(new AnnotatedDocument(uid, text, xmi));
+
+        request.setAttribute("documentId", uid);
+        response.setStatus(201);
+        return "documentSaved";
     }
 }

@@ -57,7 +57,7 @@ public class mvcDispatcherTests {
     public void shouldSaveDocumentAndReturnId() throws Exception {
         mockMvc.perform(
                 post("/postDocument")
-                    .param("document", "Абсолютно небольшой русский текст, который нужно сохранить в базу.")
+                    .param("text", "Абсолютно небольшой русский текст, который нужно сохранить в базу.")
         )
                 .andExpect(status().isCreated())
                 .andExpect(request().attribute("documentId", new Matcher<Object>() {

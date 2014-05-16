@@ -2,6 +2,7 @@ package ru.kpfu.itis.issst.search.service;
 
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Random;
 
 /**
@@ -12,7 +13,12 @@ import java.util.Random;
 public class UIDGenerator {
     private Random random;
 
+    @PostConstruct
+    private void initialize() {
+        random = new Random();
+    }
+
     public String getUID() {
-        return String.valueOf(random.nextLong()) + String.valueOf(System.currentTimeMillis());
+        return String.valueOf(Math.abs(random.nextLong())) + String.valueOf(System.currentTimeMillis());
     }
 }
