@@ -38,9 +38,20 @@ public class DocumentStorage {
         mongoTemplate.remove(new Query(Criteria.where("id").is(id)), AnnotatedDocument.class, DOCUMENT_DATABASE);
     }
 
-    public List<AnnotatedDocument> findAll(int offset, int limit) {
+    /**
+     * returns only _id and firstSymbols!
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public List<AnnotatedDocument> findAllIdsWithDescription(int offset, int limit) {
         Query query = new Query();
         query.skip(offset).limit(limit);
+        query.fields().include("_id").include("firstSymbols");
         return mongoTemplate.find(query, AnnotatedDocument.class, DOCUMENT_DATABASE);
+    }
+
+    public long getCount() {
+        return mongoTemplate.count(new Query(), DOCUMENT_DATABASE);
     }
 }

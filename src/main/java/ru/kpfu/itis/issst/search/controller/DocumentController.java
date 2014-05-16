@@ -15,6 +15,8 @@ import ru.kpfu.itis.issst.search.service.UIDGenerator;
 import ru.kpfu.itis.issst.search.service.UIMAService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * author: Nikita
@@ -22,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 public class DocumentController extends BaseController {
+    public static final Integer DEFAULT_OFFSET = 0;
+    public static final Integer DEFAULT_LIMIT = 10;
 
     @Autowired
     private UIMAService uimaService;
@@ -43,6 +47,26 @@ public class DocumentController extends BaseController {
         request.setAttribute("documentId", uid);
         response.setStatus(HttpStatus.CREATED.value());
         return "documentSaved";
+    }
+
+    @RequestMapping(value = "/getAllDocuments", method = RequestMethod.GET)
+    public String getAllDocuments(
+        @RequestParam(value = "offset", required = false) Integer offset,
+        @RequestParam(value = "limit", required = false) Integer limit,
+        HttpServletResponse response) throws IOException {
+
+        // dodging requests like ?offset=
+        if (offset == null) offset = DEFAULT_OFFSET;
+        if (limit == null) limit = DEFAULT_LIMIT;
+
+        List<AnnotatedDocument> documents = storage.findAllIdsWithDescription(offset, limit);
+        if (documents.isEmpty()) return notFound(response);
+
+        long count = storage.getCount();
+
+        request.setAttribute("documents", documents);
+        request.setAttribute("count", count);
+        return "allDocuments";
     }
 
     @RequestMapping(value = "/getDocumentPlainText", method = RequestMethod.GET)
