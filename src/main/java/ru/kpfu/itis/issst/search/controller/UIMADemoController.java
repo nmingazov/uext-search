@@ -23,15 +23,9 @@ import java.io.IOException;
  * since: 05.05.2014
  */
 @Controller
-public class UIMAPostController extends BaseController{
+public class UIMADemoController extends BaseController {
     @Autowired
     private UIMAService uimaService;
-
-    @Autowired
-    private UIDGenerator uidGenerator;
-
-    @Autowired
-    private DocumentStorage storage;
 
     /**
      * @param text source text
@@ -67,17 +61,5 @@ public class UIMAPostController extends BaseController{
         header.setContentType(new MediaType("application", "xml"));
         header.setContentLength(documentBody.length);
         return new HttpEntity<byte[]>(documentBody, header);
-    }
-
-    @RequestMapping(value = "/postDocument",method = {RequestMethod.GET, RequestMethod.POST})
-    public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response)
-            throws UIMAException, SAXException, IOException {
-        String uid = uidGenerator.getUID();
-        String xmi = uimaService.getXmlTranslatedResult(text);
-        storage.add(new AnnotatedDocument(uid, text, xmi));
-
-        request.setAttribute("documentId", uid);
-        response.setStatus(201);
-        return "documentSaved";
     }
 }
