@@ -106,7 +106,8 @@ public class DocumentControllerTests {
                 get("/deleteDocumentById")
                         .param("id", documentIdHolder.get(0))
         )
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(request().attribute("documentId", documentIdHolder.get(0)));
     }
 
     @Test

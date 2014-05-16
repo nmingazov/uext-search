@@ -34,7 +34,7 @@ public class DocumentController extends BaseController {
 
     @RequestMapping(value = "/postDocument", method = {RequestMethod.GET, RequestMethod.POST})
     public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response) throws Exception {
-        if (text.isEmpty()) return badRequest(response, "Text is empty!");
+        if (text.isEmpty()) return badRequest(response);
 
         String uid = uidGenerator.getUID();
         String xmi = uimaService.getXmlTranslatedResult(text);
@@ -47,10 +47,10 @@ public class DocumentController extends BaseController {
 
     @RequestMapping(value = "/getDocumentPlainText", method = RequestMethod.GET)
     public String getDocumentAsAPlainText(@RequestParam String id, HttpServletResponse response) throws Exception {
-        if (id.isEmpty()) return badRequest(response, "Id is empty!");
+        if (id.isEmpty()) return badRequest(response);
 
         AnnotatedDocument document = storage.getById(id);
-        if (document == null) return notFound(response, "Document with such id is not found");
+        if (document == null) return notFound(response);
 
         request.setAttribute("document", document);
         return "documentAsAPlainText";
@@ -60,13 +60,13 @@ public class DocumentController extends BaseController {
     public HttpEntity<byte[]> getDocumentAsXMI(@RequestParam String id, HttpServletResponse response) throws Exception {
         // todo: find a clean way to return xml
         if (id.isEmpty()) {
-            response.sendError(HttpStatus.BAD_REQUEST.value(), "Id is empty!");
+            response.sendError(HttpStatus.BAD_REQUEST.value());
             return null;
         }
 
         AnnotatedDocument document = storage.getById(id);
         if (document == null) {
-            response.sendError(HttpStatus.BAD_REQUEST.value(), "Id is empty!");
+            response.sendError(HttpStatus.BAD_REQUEST.value());
             return null;
         }
 
@@ -75,5 +75,19 @@ public class DocumentController extends BaseController {
         header.setContentType(new MediaType("application", "xml"));
         header.setContentLength(documentBody.length);
         return new HttpEntity<byte[]>(documentBody, header);
+    }
+
+    @RequestMapping(value = "/deleteDocumentById", method = {RequestMethod.DELETE, RequestMethod.GET})
+    public String deleteDocumentById(@RequestParam String id, HttpServletResponse response) throws Exception {
+        if (id.isEmpty()) return badRequest(response);
+
+        if (storage.exists(id)) {
+            storage.deleteById(id);
+        } else {
+            return notFound(response);
+        }
+
+        request.setAttribute("documentId", id);
+        return "documentDeleted";
     }
 }

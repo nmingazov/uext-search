@@ -17,13 +17,13 @@ public class BaseController {
     @Autowired
     protected HttpServletRequest request;
 
-    protected String badRequest(HttpServletResponse response, String message) throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value(), message);
-        return "";
+    protected String badRequest(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        return "badRequest";
     }
 
-    protected String notFound(HttpServletResponse response, String message) throws IOException {
-        response.sendError(HttpStatus.NOT_FOUND.value(), message);
-        return "";
+    protected String notFound(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpStatus.NOT_FOUND.value());
+        return "notFound";x
     }
 }
