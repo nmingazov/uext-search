@@ -82,7 +82,7 @@ public class DocumentController extends BaseController {
         if (id.isEmpty()) return badRequest(response);
 
         if (storage.exists(id)) {
-            storage.deleteById(id);
+            storage.delete(id);
         } else {
             return notFound(response);
         }
