@@ -24,6 +24,6 @@ public class BaseController {
 
     protected String notFound(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.NOT_FOUND.value());
-        return "notFound";x
+        return "notFound";
     }
 }
