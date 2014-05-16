@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -46,7 +48,7 @@ public class DocumentControllerTests {
     public static final String testText = "Абсолютно небольшой русский текст, который нужно сохранить в базу.";
 
     @Test
-    public void shouldSaveDocAndReturnIdThenGetDocById() throws Exception {
+    public void saveAndGetDocumentTest() throws Exception {
         final List<String> documentIdHolder = new ArrayList<String>(0);
         // post document
         mockMvc.perform(
@@ -91,6 +93,13 @@ public class DocumentControllerTests {
                     @Override
                     public void describeTo(Description description) {}
                 }));
+        // get as XMI
+        mockMvc.perform(
+                get("/getDocumentXMI")
+                        .param("id", documentIdHolder.get(0))
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(new MediaType("application", "xml")));
     }
 
     @Test

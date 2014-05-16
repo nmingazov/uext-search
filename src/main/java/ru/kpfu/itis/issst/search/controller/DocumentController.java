@@ -1,7 +1,10 @@
 package ru.kpfu.itis.issst.search.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,5 +54,26 @@ public class DocumentController extends BaseController {
 
         request.setAttribute("document", document);
         return "documentAsAPlainText";
+    }
+
+    @RequestMapping(value = "/getDocumentXMI", method = RequestMethod.GET)
+    public HttpEntity<byte[]> getDocumentAsXMI(@RequestParam String id, HttpServletResponse response) throws Exception {
+        // todo: find a clean way to return xml
+        if (id.isEmpty()) {
+            response.sendError(HttpStatus.BAD_REQUEST.value(), "Id is empty!");
+            return null;
+        }
+
+        AnnotatedDocument document = storage.getById(id);
+        if (document == null) {
+            response.sendError(HttpStatus.BAD_REQUEST.value(), "Id is empty!");
+            return null;
+        }
+
+        byte[] documentBody = document.getXmiView().getBytes();
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(new MediaType("application", "xml"));
+        header.setContentLength(documentBody.length);
+        return new HttpEntity<byte[]>(documentBody, header);
     }
 }
