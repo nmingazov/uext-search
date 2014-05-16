@@ -75,6 +75,13 @@
             <artifactId>uima-morph-opencorpora</artifactId>
             <version>0.2</version>
         </dependency>
+
+        <!-- MongoDB -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>1.4.2.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>

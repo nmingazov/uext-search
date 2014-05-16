@@ -1,5 +1,7 @@
 package ru.cll.search;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -48,5 +51,25 @@ public class mvcDispatcherTests {
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(new MediaType("application", "xml")));
+    }
+
+    @Test
+    public void shouldSaveDocumentAndReturnId() throws Exception {
+        mockMvc.perform(
+                post("/postDocument")
+                    .param("text", "Абсолютно небольшой русский текст, который нужно сохранить в базу.")
+        )
+                .andExpect(status().isCreated())
+                .andExpect(request().attribute("documentId", new Matcher<Object>() {
+                    @Override
+                    public boolean matches(Object o) {
+                        return o != null;
+                    }
+
+                    @Override
+                    public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {}
+                    @Override
+                    public void describeTo(Description description) {}
+                }));
     }
 }
