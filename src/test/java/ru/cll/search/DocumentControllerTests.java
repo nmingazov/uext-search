@@ -6,22 +6,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+/**
+ * author: Nikita
+ * since: 16.05.2014
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration("file:src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml")
-public class mvcDispatcherTests {
+public class DocumentControllerTests {
     private MockMvc mockMvc;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
@@ -34,30 +37,10 @@ public class mvcDispatcherTests {
     }
 
     @Test
-    public void aboutInitialText() throws Exception {
-        mockMvc.perform(
-                    get("/getDirtyAnnotations")
-                        .param("text", "HaddaWay")
-                )
-                .andExpect(status().isOk())
-                .andExpect(request().attribute("initialText", "HaddaWay"));
-    }
-
-    @Test
-    public void aboutXmlView() throws Exception {
-        mockMvc.perform(
-                get("/getXmi")
-                        .param("text", "Немного русского языка")
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(new MediaType("application", "xml")));
-    }
-
-    @Test
     public void shouldSaveDocumentAndReturnId() throws Exception {
         mockMvc.perform(
                 post("/postDocument")
-                    .param("text", "Абсолютно небольшой русский текст, который нужно сохранить в базу.")
+                        .param("text", "Абсолютно небольшой русский текст, который нужно сохранить в базу.")
         )
                 .andExpect(status().isCreated())
                 .andExpect(request().attribute("documentId", new Matcher<Object>() {
