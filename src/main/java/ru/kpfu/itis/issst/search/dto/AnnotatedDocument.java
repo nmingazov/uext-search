@@ -7,6 +7,9 @@ import org.springframework.data.annotation.Id;
  * since: 13.05.2014
  */
 public class AnnotatedDocument {
+    // const for first N symbols stored in DB
+    private static final int FIRST_SYMBOLS_AMOUNT = 100;
+
     @Id
     private String id;
 
@@ -20,12 +23,16 @@ public class AnnotatedDocument {
      */
     private String xmiView;
 
-    public AnnotatedDocument(){}
+    /**
+     * first N symbols
+     */
+    private String firstSymbols;
 
     public AnnotatedDocument(String id, String plainText, String xmiView) {
         this.id = id;
         this.plainText = plainText;
         this.xmiView = xmiView;
+        this.firstSymbols = plainText.substring(0, FIRST_SYMBOLS_AMOUNT);
     }
 
     public String getId() {
@@ -52,12 +59,17 @@ public class AnnotatedDocument {
         this.xmiView = xmiView;
     }
 
+    public String getFirstSymbols() {
+        return firstSymbols;
+    }
+
     @Override
     public String toString() {
         return "AnnotatedDocument{" +
                 "id='" + id + '\'' +
                 ", plainText='" + plainText + '\'' +
                 ", xmiView='" + xmiView + '\'' +
+                ", firstSymbols='" + firstSymbols + '\'' +
                 '}';
     }
 }
