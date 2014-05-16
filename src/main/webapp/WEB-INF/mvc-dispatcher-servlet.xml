@@ -9,7 +9,15 @@
 
     <context:component-scan base-package="ru.kpfu.itis.issst.search"/>
 
-    <context:property-placeholder location="classpath:database.properties"/>
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:database.properties</value>
+                <value>classpath:uima.properties</value>
+            </list>
+        </property>
+    </bean>
 
     <!-- Создаем бин 'mongo' -->
     <mongo:mongo host="${mongo.host}" port="${mongo.port}"/>
@@ -27,5 +35,16 @@
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="java.lang.System"/>
+        <property name="targetMethod" value="setProperty"/>
+        <property name="arguments">
+        <list>
+            <value>uima.datapath</value>
+            <value>${uima.datapath}</value>
+        </list>
+        </property>
     </bean>
 </beans>
