@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Base class for all controllers
@@ -16,8 +17,13 @@ public class BaseController {
     @Autowired
     protected HttpServletRequest request;
 
-    protected String badRequest(HttpServletResponse response) {
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+    protected String badRequest(HttpServletResponse response, String message) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value(), message);
+        return "";
+    }
+
+    protected String notFound(HttpServletResponse response, String message) throws IOException {
+        response.sendError(HttpStatus.NOT_FOUND.value(), message);
         return "";
     }
 }

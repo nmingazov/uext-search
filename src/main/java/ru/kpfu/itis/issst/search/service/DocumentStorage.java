@@ -21,4 +21,8 @@ public class DocumentStorage {
     public void add(AnnotatedDocument document) {
         mongoTemplate.save(document, DOCUMENT_DATABASE);
     }
+
+    public AnnotatedDocument getById(String id) {
+        return mongoTemplate.findById(id, AnnotatedDocument.class, DOCUMENT_DATABASE);
+    }
 }

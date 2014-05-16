@@ -1,23 +1,17 @@
 package ru.kpfu.itis.issst.search.controller;
 
-import org.apache.uima.UIMAException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.xml.sax.SAXException;
 import ru.kpfu.itis.issst.search.dto.AnnotatedDocument;
 import ru.kpfu.itis.issst.search.service.DocumentStorage;
 import ru.kpfu.itis.issst.search.service.UIDGenerator;
 import ru.kpfu.itis.issst.search.service.UIMAService;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * author: Nikita
@@ -35,10 +29,9 @@ public class DocumentController extends BaseController {
     @Autowired
     private DocumentStorage storage;
 
-    @RequestMapping(value = "/postDocument",method = {RequestMethod.GET, RequestMethod.POST})
-    public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response)
-            throws UIMAException, SAXException, IOException {
-        if (text.isEmpty()) return badRequest(response);
+    @RequestMapping(value = "/postDocument", method = {RequestMethod.GET, RequestMethod.POST})
+    public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response) throws Exception {
+        if (text.isEmpty()) return badRequest(response, "Text is empty!");
 
         String uid = uidGenerator.getUID();
         String xmi = uimaService.getXmlTranslatedResult(text);
@@ -47,5 +40,16 @@ public class DocumentController extends BaseController {
         request.setAttribute("documentId", uid);
         response.setStatus(HttpStatus.CREATED.value());
         return "documentSaved";
+    }
+
+    @RequestMapping(value = "/getDocumentPlainText", method = RequestMethod.GET)
+    public String getDocumentAsAPlainText(@RequestParam String id, HttpServletResponse response) throws Exception {
+        if (id.isEmpty()) return badRequest(response, "Id is empty!");
+
+        AnnotatedDocument document = storage.getById(id);
+        if (document == null) return notFound(response, "Document with such id is not found");
+
+        request.setAttribute("document", document);
+        return "documentAsAPlainText";
     }
 }

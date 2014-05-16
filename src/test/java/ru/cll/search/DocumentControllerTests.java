@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.web.context.WebApplicationContext;
+import ru.kpfu.itis.issst.search.dto.AnnotatedDocument;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +43,12 @@ public class DocumentControllerTests {
         this.mockMvc = webAppContextSetup(this.wac).build();
     }
 
-    final List<String> documentIdHolder = new ArrayList<String>(0);
     public static final String testText = "Абсолютно небольшой русский текст, который нужно сохранить в базу.";
 
     @Test
-    public void shouldSaveDocumentAndReturnId() throws Exception {
+    public void shouldSaveDocAndReturnIdThenGetDocById() throws Exception {
+        final List<String> documentIdHolder = new ArrayList<String>(0);
+        // post document
         mockMvc.perform(
                 post("/postDocument")
                         .param("text", testText)
@@ -69,7 +71,26 @@ public class DocumentControllerTests {
                         documentIdHolder.add(String.valueOf(result.getRequest().getAttribute("documentId")));
                     }
                 });
-        assert(!documentIdHolder.isEmpty());
+        // get document
+        mockMvc.perform(
+                get("/getDocumentPlainText")
+                        .param("id", documentIdHolder.get(0))
+        )
+                .andExpect(status().isOk())
+                .andExpect(request().attribute("document", new Matcher<Object>() {
+                    @Override
+                    public boolean matches(Object o) {
+                        return  o != null
+                                && (o instanceof AnnotatedDocument)
+                                && ((AnnotatedDocument) o).getId().equals(documentIdHolder.get(0))
+                                && ((AnnotatedDocument) o).getPlainText().equals(testText);
+                    }
+
+                    @Override
+                    public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {}
+                    @Override
+                    public void describeTo(Description description) {}
+                }));
     }
 
     @Test
@@ -78,17 +99,6 @@ public class DocumentControllerTests {
                 post("/postDocument").param("text", "")
         )
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void shouldGetDocumentById() throws Exception {
-        assert(!documentIdHolder.isEmpty());
-        mockMvc.perform(
-                get("/getDocumentPlainText")
-                        .param("id", documentIdHolder.get(0))
-        )
-                .andExpect(status().isOk())
-                .andExpect(request().attribute("documentText", testText));
     }
 
     @Test
