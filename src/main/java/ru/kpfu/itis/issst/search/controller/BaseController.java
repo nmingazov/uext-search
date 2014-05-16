@@ -16,7 +16,7 @@ public class BaseController {
     @Autowired
     protected HttpServletRequest request;
 
-    protected String returnBadRequest(HttpServletResponse response) {
+    protected String badRequest(HttpServletResponse response) {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return "";
     }

@@ -38,7 +38,7 @@ public class DocumentController extends BaseController {
     @RequestMapping(value = "/postDocument",method = {RequestMethod.GET, RequestMethod.POST})
     public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response)
             throws UIMAException, SAXException, IOException {
-        if (text.isEmpty()) returnBadRequest(response);
+        if (text.isEmpty()) return badRequest(response);
 
         String uid = uidGenerator.getUID();
         String xmi = uimaService.getXmlTranslatedResult(text);
