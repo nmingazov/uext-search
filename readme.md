@@ -2,8 +2,15 @@
 Это модуль, интегрирующий UIMA.Ext ( https://github.com/CLLKazan/UIMA-Ext/ ) c поисковым сервером (предположительно Solr) и key-value базой (пока не определенной).
 
 ## Как запускать?
-Понадобится apache tomcat 7 (http://tomcat.apache.org/download-70.cgi).
-Параметры VM: -Duima.datapath=/path/to/dict.opcorpora.ser -Xmx2048m -Dfile.encoding=UTF-8;
+Помимо стандартного maven понадобится apache tomcat 7 (http://tomcat.apache.org/download-70.cgi).
+Параметры VM: -Xmx2048m -Dfile.encoding=UTF-8;
+Так же понадобится настроенная MongoDB(http://mongodb.org/).
+
+Затем, необходимо перенастроить под себя properties, находящиеся в src/main/resources.
+1) database.properties - параметры MongoDB: host, port, username, password и dbname (имя базы).
+Предварительно также нужно сконфигурировать пользователя внутри MongoDB.
+2) uima.properties - нужно указать путь до dict.opcorpora.ser.
+
 
 ## Что за dict.opcorpora.ser?
 Это сериализованный словарь. Забудь, зачем.
@@ -22,5 +29,4 @@
 второй - путь до формирующегося dict.opcorpora.ser (включая сам файл).
 
 ## Тесты! Где же тесты?
-Для них достаточно сделать так:
-mvn test -Duima.datapath=/path/to/dict.opcorpora.ser
+Для них достаточно сделать mvn clean test
