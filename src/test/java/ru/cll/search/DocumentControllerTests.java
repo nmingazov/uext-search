@@ -19,6 +19,7 @@ import ru.kpfu.itis.issst.search.dto.AnnotatedDocument;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -100,6 +101,12 @@ public class DocumentControllerTests {
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(new MediaType("application", "xml")));
+        // now delete
+        mockMvc.perform(
+                get("/deleteDocumentById")
+                        .param("id", documentIdHolder.get(0))
+        )
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -111,7 +118,7 @@ public class DocumentControllerTests {
     }
 
     @Test
-    public void shouldReturnBadRequestOnEmptyId() throws Exception {
+    public void shouldReturnBadRequestOnEmptyIdWhenGet() throws Exception {
         mockMvc.perform(
                 get("/getDocumentPlainText")
                         .param("id", "")
@@ -120,11 +127,29 @@ public class DocumentControllerTests {
     }
 
     @Test
-    public void shouldReturnNotFoundOnImpossibleId() throws Exception {
+    public void shouldReturnNotFoundOnImpossibleIdWhenGet() throws Exception {
         mockMvc.perform(
                 get("/getDocumentPlainText")
                         .param("id", "stringIdIsImpossibleLuke")
         )
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnNotFoundOnImpossibleIdWhenDelete() throws Exception {
+        mockMvc.perform(
+                get("/deleteDocumentById")
+                        .param("id", "stringIdIsImpossibleLuke")
+        )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnBadRequestOnEmptyIdWhenDelete() throws Exception {
+        mockMvc.perform(
+                get("/deleteDocumentById")
+                        .param("id", "")
+        )
+                .andExpect(status().isBadRequest());
     }
 }
