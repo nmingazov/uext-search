@@ -90,4 +90,22 @@ public class DocumentControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(request().attribute("documentText", testText));
     }
+
+    @Test
+    public void shouldReturnBadRequestOnEmptyId() throws Exception {
+        mockMvc.perform(
+                get("/getDocumentPlainText")
+                        .param("id", "")
+        )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnNotFoundOnImpossibleId() throws Exception {
+        mockMvc.perform(
+                get("/getDocumentPlainText")
+                        .param("id", "stringIdIsImpossibleLuke")
+        )
+                .andExpect(status().isNotFound());
+    }
 }
