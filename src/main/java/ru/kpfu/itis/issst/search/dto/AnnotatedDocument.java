@@ -8,7 +8,7 @@ import org.springframework.data.annotation.Id;
  */
 public class AnnotatedDocument {
     // const for first N symbols stored in DB
-    public static final int FIRST_SYMBOLS_AMOUNT = 100;
+    private static final int FIRST_SYMBOLS_AMOUNT = 100;
 
     @Id
     private String id;
@@ -34,7 +34,9 @@ public class AnnotatedDocument {
         this.id = id;
         this.plainText = plainText;
         this.xmiView = xmiView;
-        this.firstSymbols = plainText.substring(0, FIRST_SYMBOLS_AMOUNT);
+        if (plainText != null) {
+            this.firstSymbols = plainText.substring(0, FIRST_SYMBOLS_AMOUNT);
+        }
     }
 
     public AnnotatedDocument(String id, String plainText, String xmiView, String firstSymbols) {
