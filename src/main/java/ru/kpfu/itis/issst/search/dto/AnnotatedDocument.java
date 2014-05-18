@@ -28,8 +28,6 @@ public class AnnotatedDocument {
      */
     private String firstSymbols;
 
-    public AnnotatedDocument() {}
-
     public AnnotatedDocument(String id, String plainText, String xmiView) {
         this.id = id;
         this.plainText = plainText;
@@ -37,13 +35,6 @@ public class AnnotatedDocument {
         if (plainText != null) {
             this.firstSymbols = plainText.substring(0, FIRST_SYMBOLS_AMOUNT);
         }
-    }
-
-    public AnnotatedDocument(String id, String plainText, String xmiView, String firstSymbols) {
-        this.id = id;
-        this.plainText = plainText;
-        this.xmiView = xmiView;
-        this.firstSymbols = firstSymbols;
     }
 
     public String getId() {
