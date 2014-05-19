@@ -15,6 +15,7 @@
             <list>
                 <value>classpath:database.properties</value>
                 <value>classpath:uima.properties</value>
+                <value>classpath:solr.properties</value>
             </list>
         </property>
     </bean>

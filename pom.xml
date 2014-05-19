@@ -88,6 +88,13 @@
             <artifactId>spring-data-mongodb</artifactId>
             <version>1.4.2.RELEASE</version>
         </dependency>
+
+        <!-- Solr -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>4.7.1</version>
+        </dependency>
     </dependencies>
 
     <build>
