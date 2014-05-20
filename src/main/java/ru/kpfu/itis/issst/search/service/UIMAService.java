@@ -19,9 +19,12 @@ import org.uimafit.pipeline.SimplePipeline;
 import org.uimafit.util.JCasUtil;
 import org.xml.sax.SAXException;
 import ru.kfu.cll.uima.segmentation.SentenceSplitter;
+import ru.kfu.cll.uima.segmentation.fstype.Sentence;
 import ru.kfu.cll.uima.tokenizer.InitialTokenizer;
 import ru.kfu.cll.uima.tokenizer.PostTokenizer;
 import ru.kfu.itis.issst.uima.morph.commons.TagAssembler;
+import ru.kpfu.itis.issst.search.dto.annotation.Position;
+import ru.kpfu.itis.issst.search.dto.annotation.SolrSentence;
 import ru.ksu.niimm.cll.uima.morph.opencorpora.MorphologyAnnotator;
 import ru.ksu.niimm.cll.uima.morph.opencorpora.resource.ConfigurableSerializedDictionaryResource;
 import ru.ksu.niimm.cll.uima.morph.opencorpora.resource.DummyWordformPredictor;
@@ -29,7 +32,10 @@ import ru.ksu.niimm.cll.uima.morph.opencorpora.resource.DummyWordformPredictor;
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * author: Nikita
@@ -118,5 +124,33 @@ public class UIMAService {
         ser.serialize(jCas.getCas(), xmlSer.getContentHandler());
 
         return xmiOutputStream.toString("UTF-8");
+    }
+
+    /**
+     * warning! currently works only with sentence annotations!
+     * todo: thinking about abstraction annotations and cleaner way
+     *
+     * @param text source text
+     * @return Tuple of annotations formatted to Solr
+     * @throws UIMAException
+     * @throws IOException
+     */
+    public List<SolrSentence> getSentenceAnnotations(String text, String documentId)
+            throws UIMAException, IOException {
+        JCas jCas = JCasFactory.createJCas(typeSystemDescription);
+        jCas.setDocumentText(text);
+
+        SimplePipeline.runPipeline(jCas, analysisEngine);
+
+        Collection<Sentence> sentences = JCasUtil.select(jCas, Sentence.class);
+        List<SolrSentence> result = new ArrayList<SolrSentence>(sentences.size());
+        for (Sentence sentence: sentences) {
+            result.add(
+                    new SolrSentence(text.substring(sentence.getBegin(), sentence.getEnd()),
+                    new Position(documentId, sentence.getBegin(), sentence.getEnd()))
+            );
+        }
+
+        return result;
     }
 }

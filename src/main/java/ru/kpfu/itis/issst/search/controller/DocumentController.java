@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kpfu.itis.issst.search.dto.AnnotatedDocument;
+import ru.kpfu.itis.issst.search.dto.annotation.SolrSentence;
 import ru.kpfu.itis.issst.search.service.DocumentStorage;
+import ru.kpfu.itis.issst.search.service.SearchService;
 import ru.kpfu.itis.issst.search.service.UIDGenerator;
 import ru.kpfu.itis.issst.search.service.UIMAService;
 
@@ -36,6 +38,9 @@ public class DocumentController extends BaseController {
     @Autowired
     private DocumentStorage storage;
 
+    @Autowired
+    private SearchService searchService;
+
     @RequestMapping(value = "/postDocument", method = {RequestMethod.GET, RequestMethod.POST})
     public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response) throws Exception {
         if (text.isEmpty()) return badRequest(response);
@@ -43,6 +48,9 @@ public class DocumentController extends BaseController {
         String uid = uidGenerator.getUID();
         String xmi = uimaService.getXmlTranslatedResult(text);
         storage.add(new AnnotatedDocument(uid, text, xmi));
+
+        List<SolrSentence> solrSentences = uimaService.getSentenceAnnotations(text, uid);
+        searchService.postAnnotations(solrSentences);
 
         request.setAttribute("documentId", uid);
         response.setStatus(HttpStatus.CREATED.value());
