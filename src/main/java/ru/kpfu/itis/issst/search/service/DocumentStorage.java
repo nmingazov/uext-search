@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.issst.search.dto.AnnotatedDocument;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * author: Nikita
@@ -49,6 +49,23 @@ public class DocumentStorage {
         query.skip(offset).limit(limit);
         query.fields().include("_id").include("firstSymbols");
         return mongoTemplate.find(query, AnnotatedDocument.class, DOCUMENT_DATABASE);
+    }
+
+    /**
+     * returns only _id and firstSymbols!
+     * @return
+     */
+    public Map<String, AnnotatedDocument> findAllByDocumentOnPositions(Collection<String> ids) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").in(ids));
+        query.fields().include("_id").include("firstSymbols");
+
+        List<AnnotatedDocument> documents = mongoTemplate.find(query, AnnotatedDocument.class, DOCUMENT_DATABASE);
+        Map<String, AnnotatedDocument> result = new HashMap<String, AnnotatedDocument>();
+        for (AnnotatedDocument document: documents) {
+            result.put(document.getId(), document);
+        }
+        return result;
     }
 
     public long getCount() {

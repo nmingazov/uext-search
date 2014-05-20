@@ -38,4 +38,25 @@ public class Position {
     public void setEnd(int end) {
         this.end = end;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Position position = (Position) o;
+
+        return begin == position.begin
+                && end == position.end
+                && documentId.equals(position.documentId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = documentId.hashCode();
+        result = 31 * result + begin;
+        result = 31 * result + end;
+        return result;
+    }
 }

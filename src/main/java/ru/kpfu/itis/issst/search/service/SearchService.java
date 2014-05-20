@@ -1,15 +1,22 @@
 package ru.kpfu.itis.issst.search.service;
 
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.issst.search.dto.annotation.BaseAnnotation;
+import ru.kpfu.itis.issst.search.dto.annotation.Position;
+import ru.kpfu.itis.issst.search.dto.annotation.Sentence;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -33,8 +40,15 @@ public class SearchService {
         solrServer = new HttpSolrServer(solrServerUrl);
     }
 
-    public void postAnnotations(List<BaseAnnotation> annotations) throws IOException, SolrServerException {
+    public void postAnnotations(List<? extends BaseAnnotation> annotations) throws IOException, SolrServerException {
         solrServer.addBeans(annotations);
         solrServer.commit();
+    }
+
+    public <T extends BaseAnnotation> List<T> searchByQuery(String query, Class<T> type) throws SolrServerException {
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(query);
+        QueryResponse rsp = solrServer.query(solrQuery);
+        return rsp.getBeans(type);
     }
 }

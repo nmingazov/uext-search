@@ -11,10 +11,10 @@ import java.util.List;
  */
 public class BaseAnnotation {
     @Field
-    private String span;
+    protected String span;
 
     @Field
-    private List<String> documentIdWithPosition;
+    protected List<String> documentIdWithPosition;
 
     /**
      * used inside solrj!
@@ -26,11 +26,11 @@ public class BaseAnnotation {
         this.addPosition(position);
     }
 
-    private String createDocumentIdWithPosition(Position position) {
+    protected String createDocumentIdWithPosition(Position position) {
         return position.getDocumentId() + ":" + position.getBegin() + ":" + position.getEnd();
     }
 
-    private Position parseDocumentIdWithPosition(String documentIdWithPosition) {
+    protected Position parseDocumentIdWithPosition(String documentIdWithPosition) {
         if (!documentIdWithPosition.contains(":")) throw new RuntimeException("documentIdWithPosition doesn't contains ':'!");
         String[] tmp = documentIdWithPosition.split(":");
         if (tmp.length != 3) throw new RuntimeException("documentIdWithPosition has wrong format!");
