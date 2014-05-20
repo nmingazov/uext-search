@@ -33,7 +33,11 @@ public class AnnotatedDocument {
         this.plainText = plainText;
         this.xmiView = xmiView;
         if (plainText != null) {
-            this.firstSymbols = plainText.substring(0, FIRST_SYMBOLS_AMOUNT);
+            if (plainText.length() <= FIRST_SYMBOLS_AMOUNT) {
+                this.firstSymbols = plainText;
+            } else {
+                this.firstSymbols = plainText.substring(0, FIRST_SYMBOLS_AMOUNT);
+            }
         }
     }
 
