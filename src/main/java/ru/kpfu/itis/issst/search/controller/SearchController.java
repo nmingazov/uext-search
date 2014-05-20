@@ -33,6 +33,10 @@ public class SearchController extends BaseController {
     public String searchSentencesByQuery(@RequestParam String query) throws SolrServerException {
         List<SolrSentence> annotations = searchService.searchByQuery(query, SolrSentence.class);
 
+        if (annotations.isEmpty()) {
+            return "emptyResults";
+        }
+
         Set<String> documentIds = new HashSet<String>();
         for (SolrSentence annotation: annotations) {
             for (Position position: annotation.getPositions()) {

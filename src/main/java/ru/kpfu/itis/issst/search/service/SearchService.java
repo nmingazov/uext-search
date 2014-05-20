@@ -27,7 +27,7 @@ public class SearchService {
      * according to http://wiki.apache.org/solr/Solrj, HttpSolrServer is thread-safe
      * moreover, SearchService is a singleton
      */
-    private SolrServer solrServer = new HttpSolrServer(solrServerUrl);
+    private SolrServer solrServer;
 
 
     @PostConstruct

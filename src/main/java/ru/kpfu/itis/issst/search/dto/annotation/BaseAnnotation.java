@@ -14,7 +14,7 @@ public class BaseAnnotation {
     protected String span;
 
     @Field
-    protected List<String> documentIdWithPosition;
+    protected List<String> documentPositions;
 
     /**
      * used inside solrj!
@@ -31,9 +31,9 @@ public class BaseAnnotation {
     }
 
     protected Position parseDocumentIdWithPosition(String documentIdWithPosition) {
-        if (!documentIdWithPosition.contains(":")) throw new RuntimeException("documentIdWithPosition doesn't contains ':'!");
+        if (!documentIdWithPosition.contains(":")) throw new RuntimeException("documentPositions doesn't contains ':'!");
         String[] tmp = documentIdWithPosition.split(":");
-        if (tmp.length != 3) throw new RuntimeException("documentIdWithPosition has wrong format!");
+        if (tmp.length != 3) throw new RuntimeException("documentPositions has wrong format!");
         String id = tmp[0];
         int begin;
         int end;
@@ -41,16 +41,16 @@ public class BaseAnnotation {
             begin = Integer.parseInt(tmp[1]);
             end = Integer.parseInt(tmp[2]);
         } catch (NumberFormatException e) {
-            throw new RuntimeException("documentIdWithPosition's begin and end can't be parsed!");
+            throw new RuntimeException("documentPositions's begin and end can't be parsed!");
         }
         return new Position(id, begin, end);
     }
 
     public void addPosition(Position position) {
-        if (this.documentIdWithPosition == null) {
-            documentIdWithPosition = new ArrayList<String>();
+        if (this.documentPositions == null) {
+            documentPositions = new ArrayList<String>();
         }
-        documentIdWithPosition.add(createDocumentIdWithPosition(position));
+        documentPositions.add(createDocumentIdWithPosition(position));
     }
 
     public String getSpan() {
@@ -63,11 +63,11 @@ public class BaseAnnotation {
 
     public List<Position> getPositions() {
         List<Position> result;
-        if (this.documentIdWithPosition == null || this.documentIdWithPosition.isEmpty()) {
+        if (this.documentPositions == null || this.documentPositions.isEmpty()) {
             result =  new ArrayList<Position>(0);
         } else {
-            result = new ArrayList<Position>(documentIdWithPosition.size());
-            for (String unparsed: documentIdWithPosition) {
+            result = new ArrayList<Position>(documentPositions.size());
+            for (String unparsed: documentPositions) {
                 result.add(parseDocumentIdWithPosition(unparsed));
             }
         }
@@ -77,14 +77,14 @@ public class BaseAnnotation {
     /**
      * used only in solrj
      */
-    public List<String> getDocumentIdWithPosition() {
-        return documentIdWithPosition;
+    public List<String> getDocumentPositions() {
+        return documentPositions;
     }
 
     /**
      * used only in solrj
      */
-    public void setDocumentIdWithPosition(List<String> documentIdWithPosition) {
-        this.documentIdWithPosition = documentIdWithPosition;
+    public void setDocumentPositions(List<String> documentPositions) {
+        this.documentPositions = documentPositions;
     }
 }
