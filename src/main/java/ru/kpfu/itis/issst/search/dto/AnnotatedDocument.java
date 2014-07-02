@@ -28,6 +28,16 @@ public class AnnotatedDocument {
      */
     private String firstSymbols;
 
+    /**
+     * Checks if document annotated by UIMA
+     */
+    private boolean isAnnotated;
+
+    /**
+     * Checks if document indexed within Solr
+     */
+    private boolean isIndexed;
+
     public AnnotatedDocument(String id, String plainText, String xmiView) {
         this.id = id;
         this.plainText = plainText;
@@ -69,6 +79,22 @@ public class AnnotatedDocument {
         return firstSymbols;
     }
 
+    public boolean isAnnotated() {
+        return isAnnotated;
+    }
+
+    public void setAnnotated(boolean isAnnotated) {
+        this.isAnnotated = isAnnotated;
+    }
+
+    public boolean isIndexed() {
+        return isIndexed;
+    }
+
+    public void setIndexed(boolean isIndexed) {
+        this.isIndexed = isIndexed;
+    }
+
     @Override
     public String toString() {
         return "AnnotatedDocument{" +
@@ -76,6 +102,8 @@ public class AnnotatedDocument {
                 ", plainText='" + plainText + '\'' +
                 ", xmiView='" + xmiView + '\'' +
                 ", firstSymbols='" + firstSymbols + '\'' +
+                ", isAnnotated=" + isAnnotated +
+                ", isIndexed=" + isIndexed +
                 '}';
     }
 }
