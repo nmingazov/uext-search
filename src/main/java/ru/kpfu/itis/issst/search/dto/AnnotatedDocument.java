@@ -38,10 +38,10 @@ public class AnnotatedDocument {
      */
     private boolean isIndexed;
 
-    public AnnotatedDocument(String id, String plainText, String xmiView) {
+    public AnnotatedDocument(String id, String plainText) {
         this.id = id;
         this.plainText = plainText;
-        this.xmiView = xmiView;
+        // first symbols
         if (plainText != null) {
             if (plainText.length() <= FIRST_SYMBOLS_AMOUNT) {
                 this.firstSymbols = plainText;
@@ -49,7 +49,14 @@ public class AnnotatedDocument {
                 this.firstSymbols = plainText.substring(0, FIRST_SYMBOLS_AMOUNT);
             }
         }
+        // isAnnotated and isIndexed is 0 by default
     }
+
+    public AnnotatedDocument(String id, String plainText, String xmiView) {
+        this(id, plainText);
+        this.xmiView = xmiView;
+    }
+
 
     public String getId() {
         return id;

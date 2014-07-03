@@ -5,6 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,17 +42,38 @@ public class DocumentController extends BaseController {
     @Autowired
     private SearchService searchService;
 
+    @Async
+    private void asyncDocumentProcessing(String uid, String text) throws Exception {
+        String xmi = uimaService.getXmlTranslatedResult(text);
+        // todo: update document xmi in database
+
+        // run indexing
+        asyncDocumentIndexing(uid, text);
+    }
+
+    @Async
+    private void asyncDocumentIndexing(String uid, String text) throws Exception {
+        List<SolrSentence> solrSentences = uimaService.getSentenceAnnotations(uid, text);
+        searchService.postAnnotations(solrSentences);
+
+        // todo: update document indexing flag
+    }
+
     @RequestMapping(value = "/postDocument", method = {RequestMethod.GET, RequestMethod.POST})
     public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response) throws Exception {
         if (text.isEmpty()) return badRequest(response);
 
+        // firstly, generate id
         String uid = uidGenerator.getUID();
-        String xmi = uimaService.getXmlTranslatedResult(text);
-        storage.add(new AnnotatedDocument(uid, text, xmi));
 
-        List<SolrSentence> solrSentences = uimaService.getSentenceAnnotations(text, uid);
-        searchService.postAnnotations(solrSentences);
+        // secondly, add to a storage
+        // can't be async, because we need to be sure that document is in the database
+        storage.add(new AnnotatedDocument(uid, text));
 
+        // thirdly, run preprocessing and indexing
+        asyncDocumentProcessing(uid, text);
+
+        // then, return docID to user
         request.setAttribute("documentId", uid);
         response.setStatus(HttpStatus.CREATED.value());
         return "documentSaved";

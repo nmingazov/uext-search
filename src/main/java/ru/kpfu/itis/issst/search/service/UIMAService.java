@@ -135,7 +135,7 @@ public class UIMAService {
      * @throws UIMAException
      * @throws IOException
      */
-    public List<SolrSentence> getSentenceAnnotations(String text, String documentId)
+    public List<SolrSentence> getSentenceAnnotations(String documentId, String text)
             throws UIMAException, IOException {
         JCas jCas = JCasFactory.createJCas(typeSystemDescription);
         jCas.setDocumentText(text);
