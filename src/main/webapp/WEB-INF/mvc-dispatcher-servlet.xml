@@ -2,10 +2,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <context:component-scan base-package="ru.kpfu.itis.issst.search"/>
 
@@ -16,6 +17,7 @@
                 <value>classpath:database.properties</value>
                 <value>classpath:uima.properties</value>
                 <value>classpath:solr.properties</value>
+                <value>classpath:async.properties</value>
             </list>
         </property>
     </bean>
@@ -48,4 +50,8 @@
         </list>
         </property>
     </bean>
+
+    <task:annotation-driven executor="asyncExecutor"/>
+
+    <task:executor id="asyncExecutor" pool-size="${executor.pool-size}"/>
 </beans>

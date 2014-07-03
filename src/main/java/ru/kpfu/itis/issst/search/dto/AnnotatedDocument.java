@@ -3,6 +3,9 @@ package ru.kpfu.itis.issst.search.dto;
 import org.springframework.data.annotation.Id;
 
 /**
+ * Class which holds documents
+ *
+ * todo: all fields hardcoded now, see @DocumentStorage
  * author: Nikita
  * since: 13.05.2014
  */
@@ -37,6 +40,9 @@ public class AnnotatedDocument {
      * Checks if document indexed within Solr
      */
     private boolean isIndexed;
+
+    public AnnotatedDocument() {
+    }
 
     public AnnotatedDocument(String id, String plainText) {
         this.id = id;

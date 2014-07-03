@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kpfu.itis.issst.search.dto.AnnotatedDocument;
 import ru.kpfu.itis.issst.search.dto.annotation.SolrSentence;
-import ru.kpfu.itis.issst.search.service.DocumentStorage;
-import ru.kpfu.itis.issst.search.service.SearchService;
-import ru.kpfu.itis.issst.search.service.UIDGenerator;
-import ru.kpfu.itis.issst.search.service.UIMAService;
+import ru.kpfu.itis.issst.search.service.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,33 +28,13 @@ public class DocumentController extends BaseController {
     public static final Integer DEFAULT_LIMIT = 10;
 
     @Autowired
-    private UIMAService uimaService;
-
-    @Autowired
     private UIDGenerator uidGenerator;
 
     @Autowired
     private DocumentStorage storage;
 
     @Autowired
-    private SearchService searchService;
-
-    @Async
-    private void asyncDocumentProcessing(String uid, String text) throws Exception {
-        String xmi = uimaService.getXmlTranslatedResult(text);
-        // todo: update document xmi in database
-
-        // run indexing
-        asyncDocumentIndexing(uid, text);
-    }
-
-    @Async
-    private void asyncDocumentIndexing(String uid, String text) throws Exception {
-        List<SolrSentence> solrSentences = uimaService.getSentenceAnnotations(uid, text);
-        searchService.postAnnotations(solrSentences);
-
-        // todo: update document indexing flag
-    }
+    private AsyncProcessor asyncProcessor;
 
     @RequestMapping(value = "/postDocument", method = {RequestMethod.GET, RequestMethod.POST})
     public String postDocumentToDatabase(@RequestParam String text, HttpServletResponse response) throws Exception {
@@ -71,7 +48,7 @@ public class DocumentController extends BaseController {
         storage.add(new AnnotatedDocument(uid, text));
 
         // thirdly, run preprocessing and indexing
-        asyncDocumentProcessing(uid, text);
+        asyncProcessor.asyncDocumentProcessing(uid, text);
 
         // then, return docID to user
         request.setAttribute("documentId", uid);

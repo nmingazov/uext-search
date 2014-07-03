@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.issst.search.dto.AnnotatedDocument;
 
@@ -36,6 +37,34 @@ public class DocumentStorage {
 
     public void delete(String id) {
         mongoTemplate.remove(new Query(Criteria.where("id").is(id)), AnnotatedDocument.class, DOCUMENT_DATABASE);
+    }
+
+    /**
+     * updates xmi for given id, also set "isAnnotated" to true
+     * @param id documentId
+     * @param xmi UIMA XMI view
+     */
+    public void updateDocumentXMI(String id, String xmi) {
+        mongoTemplate.findAndModify(
+                new Query(Criteria.where("id").is(id)),
+                new Update().set("xmiView", xmi).set("isAnnotated", true),
+                AnnotatedDocument.class,
+                DOCUMENT_DATABASE
+        );
+    }
+
+    /**
+     * sets flag isIndexed to document with given id
+     * @param id documentId
+     * @param isIndexed UIMA XMI view
+     */
+    public void updateIsIndexedFlag(String id, boolean isIndexed) {
+        mongoTemplate.updateFirst(
+                new Query(Criteria.where("id").is(id)),
+                Update.update("isIndexed", isIndexed),
+                AnnotatedDocument.class,
+                DOCUMENT_DATABASE
+        );
     }
 
     /**
